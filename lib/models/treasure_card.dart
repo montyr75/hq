@@ -1,5 +1,5 @@
 class TreasureCard {
-  final String  title;
+  final String title;
   final String description;
   final bool isGood;
 
@@ -8,4 +8,6 @@ class TreasureCard {
     required this.description,
     required this.isGood,
   });
+
+  bool get isBad => !isGood;
 }
