@@ -1,13 +1,16 @@
+// TODO: Make [action] enum with values [discard], [replaceAndShuffle], [hand]
+
 class TreasureCard {
   final String title;
   final String description;
-  final bool isGood;
+  final bool shouldDiscard;
 
   const TreasureCard({
     required this.title,
     required this.description,
-    required this.isGood,
+    required this.shouldDiscard,
   });
 
-  bool get isBad => !isGood;
+  @override
+  String toString() => "$title\n$description";
 }

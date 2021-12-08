@@ -7,5 +7,9 @@ class TreasureDeck {
 
   TreasureDeck() {
     _cards.addAll(treasureCards);
+    _cards.shuffle();
   }
+
+  TreasureCard get peek => _cards.last;
+  TreasureCard get draw => _cards.removeLast();
 }

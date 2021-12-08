@@ -1,8 +1,12 @@
-import 'package:hq/data/treasure_cards.dart';
+import 'package:hq/models/treasure_deck.dart';
 
 void main() {
-  final deck = List.from(treasureCards);
-  deck.shuffle();
+  final deck = TreasureDeck();
 
-  print("DRAW: ${deck.last.title}\n${deck.last.description}");
+  final card = deck.draw;
+
+  print("DRAW: $card");
+
+  print("PEEK: ${deck.peek}");
+  print("PEEK: ${deck.peek}");
 }
