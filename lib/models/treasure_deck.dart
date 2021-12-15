@@ -10,6 +10,37 @@ class TreasureDeck {
     _cards.shuffle();
   }
 
-  TreasureCard get peek => _cards.last;
-  TreasureCard get draw => _cards.removeLast();
+  TreasureCard peek() => _cards.last;
+
+  TreasureCard draw() {
+    final card = _cards.removeLast();
+
+    if (card.action == TreasureCardAction.replaceAndShuffle) {
+      _cards.insert(0, card);
+      _cards.shuffle();
+    }
+    else if (card.action == TreasureCardAction.discard) {
+      _discards.add(card);
+    }
+
+    return card;
+  }
+
+  String cardsToString({bool showDiscards = false}) {
+    final cards = !showDiscards ? _cards : _discards;
+
+    final buffer = StringBuffer();
+
+    for (int i = 0; i < cards.length; i++) {
+      buffer.writeln("$i: ${cards[i].title}");
+    }
+
+    final str = buffer.toString();
+
+    if (str.isEmpty) {
+      return "<NO CARDS>";
+    }
+
+    return str;
+  }
 }
