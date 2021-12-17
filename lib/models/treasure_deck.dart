@@ -20,14 +20,20 @@ class TreasureDeck {
       _cards.shuffle();
     }
     else if (card.action == TreasureCardAction.discard) {
-      _discards.add(card);
+     discard(card);
     }
 
     return card;
   }
 
+  void discard(TreasureCard card) => _discards.add(card);
+
   String cardsToString({bool showDiscards = false}) {
     final cards = !showDiscards ? _cards : _discards;
+
+    if (cards.isEmpty) {
+      return "<NO CARDS>";
+    }
 
     final buffer = StringBuffer();
 
@@ -35,12 +41,6 @@ class TreasureDeck {
       buffer.writeln("$i: ${cards[i].title}");
     }
 
-    final str = buffer.toString();
-
-    if (str.isEmpty) {
-      return "<NO CARDS>";
-    }
-
-    return str;
+    return buffer.toString();
   }
 }
