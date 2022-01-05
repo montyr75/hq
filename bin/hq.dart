@@ -4,14 +4,20 @@ import 'package:hq/models/treasure_card.dart';
 import 'package:hq/models/treasure_deck.dart';
 import 'package:hq/utils/console_utils.dart';
 
-final deck = TreasureDeck();
-final hand = Hand();
+const badMenuSelectionMsg = "What the hell are you talking about? Try again, pal!";
+
+final treasureDeck = TreasureDeck();
+
+final Map<String, Hand> hands = {
+  'Russell': Hand(),
+  'Kieran': Hand(),
+};
 
 void main() {
   Console.init();
 
   printTitle();
-  printMenu();
+  printMainMenu();
 }
 
 void printTitle() {
@@ -21,7 +27,7 @@ void printTitle() {
   Console.write("\n**************\n");
 }
 
-void printMenu() {
+void printMainMenu() {
   consoleNewLine();
 
   printMenuItem(phrase: "Draw a card");
@@ -32,22 +38,45 @@ void printMenu() {
   final input = promptForString("Selection: ")!.toLowerCase();
 
   switch (input) {
-    case 'd': drawCard(); break;
-    case 'h': printMessage(hand.cardsToString()); break;
-    case 's': printMessage(deck.cardsToString(showDiscards: true)); break;
+    case 'd': drawTreasureCard(printPlayerMenu()); break;
+    case 'h': printMessage(hands[printPlayerMenu()]!.cardsToString()); break;
+    case 's': printMessage(treasureDeck.cardsToString(showDiscards: true)); break;
     case 'q': printMessage("GOODBYE!"); return;
-    default: printError("What the hell are you talking about? Try again, pal!"); break;
+    default: printError(badMenuSelectionMsg); break;
   }
 
   // show the menu again to prevent program exit
-  printMenu();
+  printMainMenu();
 }
 
-void drawCard() {
-  final card = deck.draw();
+String printPlayerMenu() {
+  consoleNewLine();
+
+  final listOfPlayers = hands.keys.toList();
+
+  for (int i = 0; i < listOfPlayers.length; i++) {
+    printMenuItem(phrase: "${i + 1}. ${listOfPlayers[i]}");
+  }
+
+  final input = promptForInt("Selection: ");
+
+  if (input != null) {
+    final index = input - 1;
+
+    if (index >= 0 && index < listOfPlayers.length) {
+      return listOfPlayers[index];
+    }
+  }
+
+  printError(badMenuSelectionMsg);
+  return printPlayerMenu();
+}
+
+void drawTreasureCard(String player) {
+  final card = treasureDeck.draw();
 
   if (card.action == TreasureCardAction.hand) {
-    hand.add(card);
+    hands[player]!.add(card);
   }
 
   printMessage(card.toString());
