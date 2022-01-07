@@ -4,20 +4,27 @@ import 'package:hq/models/treasure_card.dart';
 import 'package:hq/models/treasure_deck.dart';
 import 'package:hq/utils/console_utils.dart';
 
+// TODO: Create a Hero class that contains the hand and tracks gold.
+
 const badMenuSelectionMsg = "What the hell are you talking about? Try again, pal!";
+const unimplementedMsg = "Not yet implemented.";
+
+const heroes = [
+  'Barbarian',
+  'Dwarf',
+  'Elf',
+  'Wizard',
+];
 
 final treasureDeck = TreasureDeck();
 
-final Map<String, Hand> hands = {
-  'Russell': Hand(),
-  'Kieran': Hand(),
-};
+final Map<String, Hand> hands = {};
 
 void main() {
   Console.init();
 
   printTitle();
-  printMainMenu();
+  printIntroMenu();
 }
 
 void printTitle() {
@@ -25,6 +32,29 @@ void printTitle() {
   Console.write("\n**************");
   Console.write("\nTREASURE CARDS");
   Console.write("\n**************\n");
+}
+
+void printIntroMenu() {
+  consoleNewLine();
+
+  printMenuItem(phrase: "New Game");
+  printMenuItem(phrase: "Load Game");
+
+  final input = promptForString("Selection: ")!.toLowerCase();
+
+  switch (input) {
+    case 'n': newGame(); printMainMenu(); break;
+    case 'l': printError(unimplementedMsg); printIntroMenu(); break;
+    default: printError(badMenuSelectionMsg); printIntroMenu(); break;
+  }
+}
+
+void newGame() {
+  treasureDeck.init();
+
+  for (final hero in heroes) {
+    hands[hero] = Hand();
+  }
 }
 
 void printMainMenu() {
@@ -38,8 +68,8 @@ void printMainMenu() {
   final input = promptForString("Selection: ")!.toLowerCase();
 
   switch (input) {
-    case 'd': drawTreasureCard(printPlayerMenu()); break;
-    case 'h': printMessage(hands[printPlayerMenu()]!.cardsToString()); break;
+    case 'd': drawTreasureCard(); break;
+    case 'h': printMessage(hands[printHeroMenu()]!.cardsToString()); break;
     case 's': printMessage(treasureDeck.cardsToString(showDiscards: true)); break;
     case 'q': printMessage("GOODBYE!"); return;
     default: printError(badMenuSelectionMsg); break;
@@ -49,13 +79,13 @@ void printMainMenu() {
   printMainMenu();
 }
 
-String printPlayerMenu() {
+String printHeroMenu() {
   consoleNewLine();
 
-  final listOfPlayers = hands.keys.toList();
+  final listOfHeroes = hands.keys.toList();
 
-  for (int i = 0; i < listOfPlayers.length; i++) {
-    printMenuItem(phrase: "${i + 1}. ${listOfPlayers[i]}");
+  for (int i = 0; i < listOfHeroes.length; i++) {
+    printMenuItem(phrase: "${i + 1}. ${listOfHeroes[i]}");
   }
 
   final input = promptForInt("Selection: ");
@@ -63,20 +93,20 @@ String printPlayerMenu() {
   if (input != null) {
     final index = input - 1;
 
-    if (index >= 0 && index < listOfPlayers.length) {
-      return listOfPlayers[index];
+    if (index >= 0 && index < listOfHeroes.length) {
+      return listOfHeroes[index];
     }
   }
 
   printError(badMenuSelectionMsg);
-  return printPlayerMenu();
+  return printHeroMenu();
 }
 
-void drawTreasureCard(String player) {
+void drawTreasureCard() {
   final card = treasureDeck.draw();
 
   if (card.action == TreasureCardAction.hand) {
-    hands[player]!.add(card);
+    hands[printHeroMenu()]!.add(card);
   }
 
   printMessage(card.toString());
