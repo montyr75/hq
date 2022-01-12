@@ -1,45 +1,53 @@
 import '../models/treasure_card.dart';
 
 const List<TreasureCard> treasureCards = [
-  TreasureCard(
+  GoldTreasureCard(
     title: "Gold!",
     description: "Amidst old rags, tattered fur robes, and soiled blankets, you find a collection of 15 gold coins. Record the money on your character sheet.",
     action: TreasureCardAction.discard,
+    goldValue: 15,
   ),
-  TreasureCard(
+  GoldTreasureCard(
     title: "Gold!",
     description: "Amidst old rags, tattered fur robes, and soiled blankets, you find a collection of 15 gold coins. Record the money on your character sheet.",
     action: TreasureCardAction.discard,
+    goldValue: 15,
   ),
-  TreasureCard(
+  GoldTreasureCard(
     title: "Gold!",
     description: "Amidst old rags, tattered fur robes, and soiled blankets, you find a collection of 25 gold coins. Record the money on your character sheet.",
     action: TreasureCardAction.discard,
+    goldValue: 25,
   ),
-  TreasureCard(
+  GoldTreasureCard(
     title: "Gold!",
     description: "Amidst old rags, tattered fur robes, and soiled blankets, you find a collection of 25 gold coins. Record the money on your character sheet.",
     action: TreasureCardAction.discard,
+    goldValue: 25,
   ),
-  TreasureCard(
+  GoldTreasureCard(
     title: "Jewels!",
     description: "You find a small wooden box. It is simple looking and very old. Within you discover that it is lined with velvet and contains very small jewels worth 50 gold coins.",
     action: TreasureCardAction.discard,
+    goldValue: 50,
   ),
-  TreasureCard(
+  GoldTreasureCard(
     title: "Jewels!",
     description: "You find a small wooden box. It is simple looking and very old. Within you discover that it is lined with velvet and contains very small jewels worth 50 gold coins.",
     action: TreasureCardAction.discard,
+    goldValue: 50,
   ),
-  TreasureCard(
+  GoldTreasureCard(
     title: "Gems!",
     description: "Tucked into the toe of an old boot you find a small gem worth 35 gold coins.",
     action: TreasureCardAction.discard,
+    goldValue: 35,
   ),
-  TreasureCard(
+  GoldTreasureCard(
     title: "Gems!",
     description: "Tucked into the toe of an old boot you find a small gem worth 35 gold coins.",
     action: TreasureCardAction.discard,
+    goldValue: 35,
   ),
   TreasureCard(
     title: "Potion of Healing",

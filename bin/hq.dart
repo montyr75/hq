@@ -1,15 +1,15 @@
 import 'package:console/console.dart';
-import 'package:hq/models/hand.dart';
+import 'package:hq/models/hero.dart';
 import 'package:hq/models/treasure_card.dart';
 import 'package:hq/models/treasure_deck.dart';
 import 'package:hq/utils/console_utils.dart';
 
-// TODO: Create a Hero class that contains the hand and tracks gold.
+// TODO: Make a Game class that houses all of our models.
 
 const badMenuSelectionMsg = "What the hell are you talking about? Try again, pal!";
 const unimplementedMsg = "Not yet implemented.";
 
-const heroes = [
+const heroTypes = [
   'Barbarian',
   'Dwarf',
   'Elf',
@@ -18,7 +18,7 @@ const heroes = [
 
 final treasureDeck = TreasureDeck();
 
-final Map<String, Hand> hands = {};
+final Map<String, Hero> heroes = {};
 
 void main() {
   Console.init();
@@ -52,8 +52,8 @@ void printIntroMenu() {
 void newGame() {
   treasureDeck.init();
 
-  for (final hero in heroes) {
-    hands[hero] = Hand();
+  for (final type in heroTypes) {
+    heroes[type] = Hero(type);
   }
 }
 
@@ -61,7 +61,7 @@ void printMainMenu() {
   consoleNewLine();
 
   printMenuItem(phrase: "Draw a card");
-  printMenuItem(phrase: "Show hand", highlightIndex: 5);
+  printMenuItem(phrase: "Show hero", highlightIndex: 5);
   printMenuItem(phrase: "Show discards");
   printMenuItem(phrase: "Quit");
 
@@ -69,7 +69,7 @@ void printMainMenu() {
 
   switch (input) {
     case 'd': drawTreasureCard(); break;
-    case 'h': printMessage(hands[printHeroMenu()]!.cardsToString()); break;
+    case 'h': printMessage(heroes[printHeroMenu()]!.toString()); break;
     case 's': printMessage(treasureDeck.cardsToString(showDiscards: true)); break;
     case 'q': printMessage("GOODBYE!"); return;
     default: printError(badMenuSelectionMsg); break;
@@ -82,7 +82,7 @@ void printMainMenu() {
 String printHeroMenu() {
   consoleNewLine();
 
-  final listOfHeroes = hands.keys.toList();
+  final listOfHeroes = heroes.keys.toList();
 
   for (int i = 0; i < listOfHeroes.length; i++) {
     printMenuItem(phrase: "${i + 1}. ${listOfHeroes[i]}");
@@ -106,7 +106,11 @@ void drawTreasureCard() {
   final card = treasureDeck.draw();
 
   if (card.action == TreasureCardAction.hand) {
-    hands[printHeroMenu()]!.add(card);
+    heroes[printHeroMenu()]!.addCard(card);
+  }
+
+  if (card is GoldTreasureCard) {
+    heroes[printHeroMenu()]!.addGold(card.goldValue);
   }
 
   printMessage(card.toString());
