@@ -1,4 +1,5 @@
 import 'package:console/console.dart';
+import 'package:hq/components/console_menu.dart';
 import 'package:hq/models/hero.dart';
 import 'package:hq/models/treasure_card.dart';
 import 'package:hq/models/treasure_deck.dart';
@@ -6,7 +7,6 @@ import 'package:hq/utils/console_utils.dart';
 
 // TODO: Make a Game class that houses all of our models.
 
-const badMenuSelectionMsg = "What the hell are you talking about? Try again, pal!";
 const unimplementedMsg = "Not yet implemented.";
 
 const heroTypes = [
@@ -37,16 +37,10 @@ void printTitle() {
 void printIntroMenu() {
   consoleNewLine();
 
-  printMenuItem(phrase: "New Game");
-  printMenuItem(phrase: "Load Game");
-
-  final input = promptForString("Selection: ")!.toLowerCase();
-
-  switch (input) {
-    case 'n': newGame(); printMainMenu(); break;
-    case 'l': printError(unimplementedMsg); printIntroMenu(); break;
-    default: printError(badMenuSelectionMsg); printIntroMenu(); break;
-  }
+  printConsoleMenu(const [
+    ConsoleMenuOption("New Game", newGame),
+    ConsoleMenuOption("Load Game", loadGame),
+  ]);
 }
 
 void newGame() {
@@ -55,28 +49,31 @@ void newGame() {
   for (final type in heroTypes) {
     heroes[type] = Hero(type);
   }
+
+  printMainMenu();
+}
+
+void loadGame() {
+  printError(unimplementedMsg);
+  printIntroMenu();
 }
 
 void printMainMenu() {
-  consoleNewLine();
+  void showHero() => printMessage(heroes[printHeroMenu()]!.toString());
+  void showDiscards() => printMessage(treasureDeck.cardsToString(showDiscards: true));
+  void quit() => printMessage("GOODBYE!");
 
-  printMenuItem(phrase: "Draw a card");
-  printMenuItem(phrase: "Show hero", highlightIndex: 5);
-  printMenuItem(phrase: "Show discards");
-  printMenuItem(phrase: "Quit");
+  final selectedOption = printConsoleMenu([
+    const ConsoleMenuOption("Draw a card", drawTreasureCard),
+    ConsoleMenuOption("Show hero", showHero),
+    ConsoleMenuOption("Show discards", showDiscards),
+    ConsoleMenuOption("Quit", quit),
+  ]);
 
-  final input = promptForString("Selection: ")!.toLowerCase();
-
-  switch (input) {
-    case 'd': drawTreasureCard(); break;
-    case 'h': printMessage(heroes[printHeroMenu()]!.toString()); break;
-    case 's': printMessage(treasureDeck.cardsToString(showDiscards: true)); break;
-    case 'q': printMessage("GOODBYE!"); return;
-    default: printError(badMenuSelectionMsg); break;
+  // if user is not quitting, show the main menu again
+  if (selectedOption.onSelect != quit) {
+    printMainMenu();
   }
-
-  // show the menu again to prevent program exit
-  printMainMenu();
 }
 
 String printHeroMenu() {
@@ -98,7 +95,7 @@ String printHeroMenu() {
     }
   }
 
-  printError(badMenuSelectionMsg);
+  // printError(badMenuSelectionMsg);
   return printHeroMenu();
 }
 
