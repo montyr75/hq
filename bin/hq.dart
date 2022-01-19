@@ -35,11 +35,9 @@ void printTitle() {
 }
 
 void printIntroMenu() {
-  consoleNewLine();
-
   printConsoleMenu(const [
-    ConsoleMenuOption("New Game", newGame),
-    ConsoleMenuOption("Load Game", loadGame),
+    ConsoleMenuOption("New Game", onSelect: newGame),
+    ConsoleMenuOption("Load Game", onSelect: loadGame),
   ]);
 }
 
@@ -59,55 +57,33 @@ void loadGame() {
 }
 
 void printMainMenu() {
-  void showHero() => printMessage(heroes[printHeroMenu()]!.toString());
-  void showDiscards() => printMessage(treasureDeck.cardsToString(showDiscards: true));
-  void quit() => printMessage("GOODBYE!");
-
   final selectedOption = printConsoleMenu([
-    const ConsoleMenuOption("Draw a card", drawTreasureCard),
-    ConsoleMenuOption("Show hero", showHero),
-    ConsoleMenuOption("Show discards", showDiscards),
-    ConsoleMenuOption("Quit", quit),
+    const ConsoleMenuOption("Draw a card", onSelect: drawTreasureCard),
+    ConsoleMenuOption("Show hero", onSelect: () => printMessage(printHeroMenu().toString())),
+    ConsoleMenuOption("Show discards", onSelect: () => printMessage(treasureDeck.cardsToString(showDiscards: true))),
+    ConsoleMenuOption("Quit", onSelect: () => printMessage("GOODBYE!")),
   ]);
 
   // if user is not quitting, show the main menu again
-  if (selectedOption.onSelect != quit) {
+  if (selectedOption.label != "Quit") {
     printMainMenu();
   }
 }
 
-String printHeroMenu() {
-  consoleNewLine();
-
-  final listOfHeroes = heroes.keys.toList();
-
-  for (int i = 0; i < listOfHeroes.length; i++) {
-    printMenuItem(phrase: "${i + 1}. ${listOfHeroes[i]}");
-  }
-
-  final input = promptForInt("Selection: ");
-
-  if (input != null) {
-    final index = input - 1;
-
-    if (index >= 0 && index < listOfHeroes.length) {
-      return listOfHeroes[index];
-    }
-  }
-
-  // printError(badMenuSelectionMsg);
-  return printHeroMenu();
+Hero printHeroMenu() {
+  final selectedOption = printConsoleMenu(heroes.keys.map(ConsoleMenuOption.new).toList());
+  return heroes[selectedOption.label]!;
 }
 
 void drawTreasureCard() {
   final card = treasureDeck.draw();
 
   if (card.action == TreasureCardAction.hand) {
-    heroes[printHeroMenu()]!.addCard(card);
+    printHeroMenu().addCard(card);
   }
 
   if (card is GoldTreasureCard) {
-    heroes[printHeroMenu()]!.addGold(card.goldValue);
+    printHeroMenu().addGold(card.goldValue);
   }
 
   printMessage(card.toString());

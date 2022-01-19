@@ -21,7 +21,7 @@ ConsoleMenuOption printConsoleMenu(List<ConsoleMenuOption> options, {String prom
     // check for valid index range
     if (index >= 0 && index < options.length) {
       final selectedOption = options[index];
-      selectedOption.onSelect();
+      selectedOption.onSelect?.call();
       return selectedOption;
     }
   }
@@ -32,9 +32,9 @@ ConsoleMenuOption printConsoleMenu(List<ConsoleMenuOption> options, {String prom
 
 class ConsoleMenuOption {
   final String label;
-  final Function onSelect;
+  final Function? onSelect;
 
-  const ConsoleMenuOption(this.label, this.onSelect);
+  const ConsoleMenuOption(this.label, {this.onSelect});
 
   @override
   String toString() => label;
