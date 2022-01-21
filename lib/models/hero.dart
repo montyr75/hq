@@ -30,8 +30,12 @@ class Hero {
 
     final buffer = StringBuffer();
 
-    for (final TreasureCard card in _hand) {
-      buffer.writeln("$card\n");
+    for (final card in _hand) {
+      buffer.writeln("$card");
+
+      if (card != _hand.last) {
+        buffer.writeln();
+      }
     }
 
     return buffer.toString();

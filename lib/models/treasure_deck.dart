@@ -6,13 +6,6 @@ class TreasureDeck {
   final List<TreasureCard> _discards = [];
 
   TreasureDeck() {
-    init();
-  }
-
-  void init() {
-    _cards.clear();
-    _discards.clear();
-
     _cards.addAll(treasureCards);
     _cards.shuffle();
   }
