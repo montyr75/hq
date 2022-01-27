@@ -7,7 +7,7 @@ import 'package:hq/utils/console_utils.dart';
 
 const unimplementedMsg = "Not yet implemented.";
 
-Game game = Game();
+Game game = Game.init();
 
 // TODO: Make Game serializable.
 
@@ -29,7 +29,7 @@ void printMainMenu() {
   printConsoleMenu([
     const ConsoleMenuOption("Draw a Treasure Card", onSelect: drawTreasureCard),
     ConsoleMenuOption("Show Hero", onSelect: () => printMessage(game[printHeroMenu()].toString())),
-    ConsoleMenuOption("Show Discards", onSelect: () => printMessage(game.treasureDeck.cardsToString(showDiscards: true))),
+    ConsoleMenuOption("Show Discards", onSelect: () => printMessage(game.treasureDeck.discardsToString())),
     const ConsoleMenuOption("Create New Game", onSelect: newGame),
     const ConsoleMenuOption("Load Saved Game", onSelect: loadGame),
     const ConsoleMenuOption("Quit", onSelect: quit),
@@ -39,19 +39,21 @@ void printMainMenu() {
 }
 
 void newGame() {
-  game = Game();
+  game = Game.init(promptForStringExt("Enter Game Name: "));
+
   printMainMenu();
 }
 
 void loadGame() {
   printError(unimplementedMsg);
+
   printMainMenu();
 }
 
 void drawTreasureCard() {
-  final heroType = printHeroMenu();
-  final card = game.drawTreasureCard(heroType);
-  printMessage(card.toString());
+  final result = game.drawTreasureCard(printHeroMenu());
+  game = result.game;
+  printMessage(result.card.toString());
 }
 
 String printHeroMenu() {

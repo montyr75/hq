@@ -1,39 +1,51 @@
+import 'package:json_annotation/json_annotation.dart';
+
 import 'treasure_card.dart';
 
+part 'hero.g.dart';
+
+@JsonSerializable(explicitToJson: true)
 class Hero {
   final String type;
-  final List<TreasureCard> _hand = [];
+  final List<TreasureCard> hand;
+  final int gold;
 
-  int _gold = 0;
-  int get gold => _gold;
+  const Hero({
+    required this.type,
+    this.hand = const [],
+    this.gold = 0,
+  });
 
-  Hero(this.type);
-
-  void addCard(TreasureCard card) => _hand.add(card);
-  void removeCard(TreasureCard card) => _hand.remove(card);
-
-  void addGold(int value) => _gold += value;
-  bool spendGold(int value) {
-    if (value > _gold) {
-      return false;
-    }
-
-    _gold -= value;
-
-    return true;
+  Hero copyWith({
+    String? type,
+    List<TreasureCard>? hand,
+    int? gold,
+  }) {
+    return Hero(
+      type: type ?? this.type,
+      hand: hand ?? this.hand,
+      gold: gold ?? this.gold,
+    );
   }
 
+  Hero addCard(TreasureCard card) => copyWith(hand: List.unmodifiable([...hand, card]));
+  Hero removeCard(TreasureCard card) => copyWith(hand: List.unmodifiable(hand.toList()..remove(card)));
+
+  Hero addGold(int value) => copyWith(gold: gold + value);
+  Hero spendGold(int value) => copyWith(gold: gold - value);
+  bool hasGold(int value) => gold >= value;
+
   String handToString() {
-    if (_hand.isEmpty) {
+    if (hand.isEmpty) {
       return "<NO CARDS>";
     }
 
     final buffer = StringBuffer();
 
-    for (final card in _hand) {
+    for (final card in hand) {
       buffer.writeln("$card");
 
-      if (card != _hand.last) {
+      if (card != hand.last) {
         buffer.writeln();
       }
     }
@@ -43,4 +55,7 @@ class Hero {
 
   @override
   String toString() => "$type\n$gold gp\n\n${handToString()}";
+
+  factory Hero.fromJson(Map<String, dynamic> json) => _$HeroFromJson(json);
+  Map<String, dynamic> toJson() => _$HeroToJson(this);
 }

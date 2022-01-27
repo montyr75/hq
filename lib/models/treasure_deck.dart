@@ -1,36 +1,54 @@
+import 'package:json_annotation/json_annotation.dart';
+
 import '../data/treasure_cards.dart';
 import 'treasure_card.dart';
 
+part 'treasure_deck.g.dart';
+
+@JsonSerializable(explicitToJson: true)
 class TreasureDeck {
-  final List<TreasureCard> _cards = [];
-  final List<TreasureCard> _discards = [];
+  final List<TreasureCard> cards;
+  final List<TreasureCard> discards;
 
-  TreasureDeck() {
-    _cards.addAll(treasureCards);
-    _cards.shuffle();
+  const TreasureDeck({
+    this.cards = const [],
+    this.discards = const [],
+  });
+
+  factory TreasureDeck.init() {
+    return TreasureDeck(
+      cards: List.unmodifiable(treasureCards.toList()..shuffle()),
+    );
   }
 
-  TreasureCard peek() => _cards.last;
-
-  TreasureCard draw() {
-    final card = _cards.removeLast();
-
-    if (card.action == TreasureCardAction.replaceAndShuffle) {
-      _cards.insert(0, card);
-      _cards.shuffle();
-    }
-    else if (card.action == TreasureCardAction.discard) {
-     discard(card);
-    }
-
-    return card;
+  TreasureDeck copyWith({
+    List<TreasureCard>? cards,
+    List<TreasureCard>? discards,
+  }) {
+    return TreasureDeck(
+      cards: cards ?? this.cards,
+      discards: discards ?? this.discards,
+    );
   }
 
-  void discard(TreasureCard card) => _discards.add(card);
+  TreasureCard peek() => cards.last;
 
-  String cardsToString({bool showDiscards = false}) {
-    final cards = !showDiscards ? _cards : _discards;
+  DrawResult draw() {
+    final card = peek();
 
+    return DrawResult(
+      treasureDeck: copyWith(cards: List.unmodifiable(cards.toList()..removeLast())),
+      card: card,
+    );
+  }
+
+  TreasureDeck discard(TreasureCard card) => copyWith(discards: List.unmodifiable([...discards, card]));
+  TreasureDeck replaceAndShuffle(TreasureCard card) => copyWith(cards: List.unmodifiable([card, ...cards]..shuffle()));
+
+  String cardsToString() => _cardsToString(cards);
+  String discardsToString() => _cardsToString(discards);
+
+  String _cardsToString(List<TreasureCard> cards) {
     if (cards.isEmpty) {
       return "<NO CARDS>";
     }
@@ -43,4 +61,14 @@ class TreasureDeck {
 
     return buffer.toString();
   }
+
+  factory TreasureDeck.fromJson(Map<String, dynamic> json) => _$TreasureDeckFromJson(json);
+  Map<String, dynamic> toJson() => _$TreasureDeckToJson(this);
+}
+
+class DrawResult {
+  final TreasureDeck treasureDeck;
+  final TreasureCard card;
+
+  const DrawResult({required this.treasureDeck, required this.card});
 }

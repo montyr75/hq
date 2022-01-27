@@ -8,6 +8,8 @@ environment:
 
 dependencies:
   console: ^4.1.0
+  json_annotation: ^4.4.0
 
-#dev_dependencies:
-#  lints: ^1.0.0
+dev_dependencies:
+  build_runner: ^2.1.7
+  json_serializable: ^6.1.4

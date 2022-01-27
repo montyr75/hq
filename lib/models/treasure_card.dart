@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'treasure_card.g.dart';
+
+@JsonSerializable(explicitToJson: true)
 class TreasureCard {
   final String title;
   final String description;
@@ -11,8 +16,12 @@ class TreasureCard {
 
   @override
   String toString() => "$title\n$description\n${action.name}";
+
+  factory TreasureCard.fromJson(Map<String, dynamic> json) => _$TreasureCardFromJson(json);
+  Map<String, dynamic> toJson() => _$TreasureCardToJson(this);
 }
 
+@JsonSerializable(explicitToJson: true)
 class GoldTreasureCard extends TreasureCard {
   final int goldValue;
 
@@ -25,6 +34,11 @@ class GoldTreasureCard extends TreasureCard {
 
   @override
   String toString() => "${super.toString()}\n$goldValue gp";
+
+  factory GoldTreasureCard.fromJson(Map<String, dynamic> json) => _$GoldTreasureCardFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$GoldTreasureCardToJson(this);
 }
 
 enum TreasureCardAction {
