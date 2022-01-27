@@ -5,6 +5,9 @@ import 'package:hq/components/console_menu.dart';
 import 'package:hq/models/game.dart';
 import 'package:hq/utils/console_utils.dart';
 
+// TODO: Use peek() to find out if we really need to ask the user for a hero type when drawing a card.
+// TODO: Implement save and load.
+
 const unimplementedMsg = "Not yet implemented.";
 
 Game game = Game.init();
