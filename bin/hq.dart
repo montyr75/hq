@@ -9,8 +9,6 @@ const unimplementedMsg = "Not yet implemented.";
 
 Game game = Game.init();
 
-// TODO: Make Game serializable.
-
 void main() {
   Console.init();
 
