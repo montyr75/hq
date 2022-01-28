@@ -1,12 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import '../utils/utils.dart' show StringX;
 import 'treasure_card.dart';
 
 part 'hero.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Hero {
-  final String type;
+  final HeroType type;
   final List<TreasureCard> hand;
   final int gold;
 
@@ -17,7 +18,7 @@ class Hero {
   });
 
   Hero copyWith({
-    String? type,
+    HeroType? type,
     List<TreasureCard>? hand,
     int? gold,
   }) {
@@ -54,8 +55,19 @@ class Hero {
   }
 
   @override
-  String toString() => "$type\n$gold gp\n\n${handToString()}";
+  String toString() => "${type.toHeroTypeString()}\n$gold gp\n\n${handToString()}";
 
   factory Hero.fromJson(Map<String, dynamic> json) => _$HeroFromJson(json);
   Map<String, dynamic> toJson() => _$HeroToJson(this);
+}
+
+enum HeroType {
+  barbarian,
+  dwarf,
+  elf,
+  wizard,
+}
+
+extension HeroTypeX on HeroType {
+  String toHeroTypeString() => name.capitalize();
 }

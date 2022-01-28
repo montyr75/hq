@@ -3,7 +3,7 @@ import '../utils/console_utils.dart';
 const maxOptions = 10;
 const badMenuSelectionMsg = "What the hell are you talking about? Try again, pal!";
 
-ConsoleMenuOption printConsoleMenu(List<ConsoleMenuOption> options, {String prompt = "Selection"}) {
+ConsoleMenuOption<T> printConsoleMenu<T>(List<ConsoleMenuOption<T>> options, {String prompt = "Selection"}) {
   assert(options.length < maxOptions, "TOO MANY OPTIONS");
 
   consoleNewLine();
@@ -30,12 +30,13 @@ ConsoleMenuOption printConsoleMenu(List<ConsoleMenuOption> options, {String prom
   return printConsoleMenu(options);
 }
 
-class ConsoleMenuOption {
-  final String label;
+class ConsoleMenuOption<T> {
+  final T value;
+  final String? label;
   final Function? onSelect;
 
-  const ConsoleMenuOption(this.label, {this.onSelect});
+  const ConsoleMenuOption(this.value, {this.label, this.onSelect});
 
   @override
-  String toString() => label;
+  String toString() => label ?? value.toString();
 }

@@ -9,7 +9,8 @@ part of 'game.dart';
 Game _$GameFromJson(Map<String, dynamic> json) => Game(
       name: json['name'] as String? ?? defaultName,
       heroes: (json['heroes'] as Map<String, dynamic>?)?.map(
-            (k, e) => MapEntry(k, Hero.fromJson(e as Map<String, dynamic>)),
+            (k, e) => MapEntry($enumDecode(_$HeroTypeEnumMap, k),
+                Hero.fromJson(e as Map<String, dynamic>)),
           ) ??
           defaultHeroes,
       treasureDeck: json['treasureDeck'] == null
@@ -19,6 +20,14 @@ Game _$GameFromJson(Map<String, dynamic> json) => Game(
 
 Map<String, dynamic> _$GameToJson(Game instance) => <String, dynamic>{
       'name': instance.name,
-      'heroes': instance.heroes.map((k, e) => MapEntry(k, e.toJson())),
+      'heroes': instance.heroes
+          .map((k, e) => MapEntry(_$HeroTypeEnumMap[k], e.toJson())),
       'treasureDeck': instance.treasureDeck.toJson(),
     };
+
+const _$HeroTypeEnumMap = {
+  HeroType.barbarian: 'barbarian',
+  HeroType.dwarf: 'dwarf',
+  HeroType.elf: 'elf',
+  HeroType.wizard: 'wizard',
+};

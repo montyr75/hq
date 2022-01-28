@@ -3,9 +3,10 @@ import 'dart:io';
 import 'package:console/console.dart';
 import 'package:hq/components/console_menu.dart';
 import 'package:hq/models/game.dart';
+import 'package:hq/models/hero.dart';
 import 'package:hq/utils/console_utils.dart';
+import 'package:hq/utils/utils.dart';
 
-// TODO: Use peek() to find out if we really need to ask the user for a hero type when drawing a card.
 // TODO: Implement save and load.
 
 const unimplementedMsg = "Not yet implemented.";
@@ -52,14 +53,20 @@ void loadGame() {
 }
 
 void drawTreasureCard() {
-  final result = game.drawTreasureCard(printHeroMenu());
+  final result = game.treasureDeck.peek().requiresHeroType
+      ? game.drawTreasureCard(printHeroMenu())
+      : game.drawTreasureCard();
+
   game = result.game;
   printMessage(result.card.toString());
 }
 
-String printHeroMenu() {
-  final selectedOption = printConsoleMenu(game.heroTypes.map(ConsoleMenuOption.new).toList());
-  return selectedOption.label;
+HeroType printHeroMenu() {
+  final selectedOption = printConsoleMenu<HeroType>(game.heroTypes.map((type) {
+    return ConsoleMenuOption<HeroType>(type, label: type.name.capitalize());
+  }).toList());
+
+  return selectedOption.value;
 }
 
 void quit() {

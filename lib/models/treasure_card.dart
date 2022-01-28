@@ -14,6 +14,8 @@ class TreasureCard {
     required this.action,
   });
 
+  bool get requiresHeroType => action != TreasureCardAction.replaceAndShuffle;
+
   @override
   String toString() => "$title\n$description\n${action.name}";
 

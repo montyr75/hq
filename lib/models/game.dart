@@ -9,16 +9,16 @@ part 'game.g.dart';
 const defaultName = 'hq_game';
 
 const defaultHeroes = {
-  'Barbarian': Hero(type: 'Barbarian'),
-  'Dwarf': Hero(type: 'Dwarf'),
-  'Elf': Hero(type: 'Elf'),
-  'Wizard': Hero(type: 'Wizard'),
+  HeroType.barbarian: Hero(type: HeroType.barbarian),
+  HeroType.dwarf: Hero(type: HeroType.dwarf),
+  HeroType.elf: Hero(type: HeroType.elf),
+  HeroType.wizard: Hero(type: HeroType.wizard),
 };
 
 @JsonSerializable(explicitToJson: true)
 class Game {
   final String name;
-  final Map<String, Hero> heroes;
+  final Map<HeroType, Hero> heroes;
   final TreasureDeck treasureDeck;
 
   Game({
@@ -37,7 +37,7 @@ class Game {
 
   Game copyWith({
     String? name,
-    Map<String, Hero>? heroes,
+    Map<HeroType, Hero>? heroes,
     TreasureDeck? treasureDeck,
   }) {
     return Game(
@@ -47,7 +47,7 @@ class Game {
     );
   }
 
-  DrawTreasureCardResult drawTreasureCard(String heroType) {
+  DrawTreasureCardResult drawTreasureCard([HeroType? heroType]) {
     // draw a card
     final result = treasureDeck.draw();
 
@@ -64,22 +64,26 @@ class Game {
       deck = deck.replaceAndShuffle(card);
     }
     else {
-      final hero = heroes[heroType];
-      assert(hero != null);
+      assert(heroType != null);
 
-      if (hero != null) {
-        // clone heroes map
-        final heroes = Map<String, Hero>.from(this.heroes);
+      if (heroType != null) {
+        final hero = heroes[heroType];
+        assert(hero != null);
 
-        if (card.action == TreasureCardAction.discard && card is GoldTreasureCard) {
-          deck = deck.discard(card);
-          heroes[heroType] = hero.addGold(card.goldValue);
+        if (hero != null) {
+          // clone heroes map
+          final heroes = Map<HeroType, Hero>.from(this.heroes);
+
+          if (card.action == TreasureCardAction.discard && card is GoldTreasureCard) {
+            deck = deck.discard(card);
+            heroes[heroType] = hero.addGold(card.goldValue);
+          }
+          else if (card.action == TreasureCardAction.hand) {
+            heroes[heroType] = hero.addCard(card);
+          }
+
+          game = game.copyWith(heroes: Map.unmodifiable(heroes));
         }
-        else if (card.action == TreasureCardAction.hand) {
-          heroes[heroType] = hero.addCard(card);
-        }
-
-        game = game.copyWith(heroes: Map.unmodifiable(heroes));
       }
     }
 
@@ -89,9 +93,9 @@ class Game {
     );
   }
 
-  Hero? operator [](String heroType) => heroes[heroType];
+  Hero? operator [](HeroType heroType) => heroes[heroType];
 
-  List<String> get heroTypes => heroes.keys.toList();
+  List<HeroType> get heroTypes => heroes.keys.toList();
 
   bool get isUnnamed => name == defaultName;
 
